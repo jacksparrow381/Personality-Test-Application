@@ -1,69 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Box, Stepper, Step, StepLabel, Button } from "@mui/material";
-
+import {
+  Box,
+  Stepper,
+  Step as StepperStep,
+  StepLabel,
+  Button,
+  Card,
+} from "@mui/material";
+import { Step } from "./Step";
 import { steps, questions } from "../constants";
 import { Question } from "./Question";
 
-export default function FormComponent(props) {
-  const { setFinishStatus } = props;
-  const [activeStep, setActiveStep] = useState(0);
-  const [answers, setAnswers] = useState({
-    Q1: null,
-    Q2: null,
-    Q3: null,
-    Q4: null,
-    Q5: null,
-  });
-  const [disable, setDisable] = useState(true);
+export default function FormComponent({ setFinishStatus }) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState(questions.map(() => null));
 
-  // function on Next button
-  const nextStep = () => {
-    if (steps.length) {
-      setActiveStep(activeStep + 1);
-    }
-    if (activeStep === 0 && answers.Q1 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 1 && answers.Q2 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 2 && answers.Q3 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 3 && answers.Q4 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 4 && answers.Q5 !== null) {
-      setDisable(!disable);
-    }
-  };
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === questions.length - 1;
+  const isDisableToNext = answers[currentStep] === null;
 
-  // function on Previous button
-  const previousStep = (e) => {
-    if (activeStep !== 0) {
-      setDisable(false);
-    } else {
-      setDisable(true);
-    }
-    if (activeStep !== steps.length) {
-      setActiveStep(activeStep - 1);
-    }
-    if (activeStep === 0 && answers.Q1 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 1 && answers.Q2 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 2 && answers.Q3 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 3 && answers.Q4 !== null) {
-      setDisable(!disable);
-    }
-    if (activeStep === 4 && answers.Q5 !== null) {
-      setDisable(!disable);
-    }
+  const saveAnswer = (answer, index) => {
+    const updatedAnswer = answers.map((x, i) => (i === index ? answer : x));
+    setAnswers(updatedAnswer);
   };
 
   const handleFinish = (e) => {
@@ -78,92 +37,14 @@ export default function FormComponent(props) {
     }
   };
 
-  const selectOption = (name, value) => {
-    setDisable(false);
-    setAnswers({ ...answers, [name]: value });
-  };
-
-  // definning array for steppers
-
-  const getStepContent = (stepIndex) => {
-    switch (stepIndex) {
-      case 0:
-        return (
-          <Box>
-            <Question
-              label="Question 1"
-              answers={answers[0]}
-              questionDetail={questions[0]}
-              optionChange={(name, value) => {
-                selectOption(name, value);
-              }}
-            />
-          </Box>
-        );
-
-      case 1:
-        return (
-          <Box>
-            <Question
-              label="Question 2"
-              answers={answers[1]}
-              questionDetail={questions[1]}
-              optionChange={(name, value) => {
-                selectOption(name, value);
-              }}
-            />
-          </Box>
-        );
-
-      case 2:
-        return (
-          <Box>
-            <Question
-              label="Question 3"
-              answers={answers[2]}
-              questionDetail={questions[2]}
-              optionChange={(name, value) => {
-                selectOption(name, value);
-              }}
-            />
-          </Box>
-        );
-
-      case 3:
-        return (
-          <Box>
-            <Question
-              label="Question 4"
-              answers={answers[3]}
-              questionDetail={questions[3]}
-              optionChange={(name, value) => {
-                selectOption(name, value);
-              }}
-            />
-          </Box>
-        );
-
-      case 4:
-        return (
-          <Box>
-            <Question
-              label="Question 5"
-              answers={answers[4]}
-              questionDetail={questions[4]}
-              optionChange={(name, value) => {
-                selectOption(name, value);
-              }}
-            />
-          </Box>
-        );
-
-      default:
-        return "Unknown stepIndex";
-    }
-  };
-
   return (
-    <Box className="mainbg">
+    <Box
+      className="mainbg"
+      height={"100vh"}
+      sx={{
+        backgroundColor: "#6dc7e8",
+      }}
+    >
       <Box>
         <Box
           sx={{
@@ -174,59 +55,89 @@ export default function FormComponent(props) {
           }}
         >
           <Stepper
-            sx={{ mt: 1, width: "70%", color: "white", pt: 2 }}
-            activeStep={activeStep}
+            sx={{
+              mt: 1,
+              color: "black",
+              pt: 2,
+            }}
+            activeStep={currentStep}
+            model={steps}
             alternativeLabel
           >
             {steps.map((label) => (
-              <Step key={label} className={"red"}>
-                <StepLabel sx={{ color: "white" }}>{label}</StepLabel>
-              </Step>
+              <StepperStep
+                key={label}
+                sx={{ pl: { xs: 0.6, sm: "8px" }, pr: { xs: 0.5, sm: "8px" } }}
+              >
+                <StepLabel sx={{ color: "black" }}>{label}</StepLabel>
+              </StepperStep>
             ))}
           </Stepper>
         </Box>
-        <br />
         <Box
           sx={{
+            height: "auto",
             display: "flex",
             justifyContent: "center",
+            alignItems: "center",
+            mt: 3,
           }}
         >
-          <Box
+          <Card
             sx={{
               borderRadius: 4,
               ml: 4,
               pl: 4,
+              pr: 4,
               mr: 4,
               pt: 2,
-              boxShadow: 3,
-              bgcolor: "rgba(255,255,255,0.3)",
-              width: "70%",
+              width: "90%",
+
+              bgcolor: "transparent",
+              color: "black",
+              height: "auto",
+              boxShadow: "0 5px 15px rgba(0,0,0,.5)",
+              position: "relative",
+              zIndex: "1",
+              "&:before": {
+                position: "absolute",
+                content: '""',
+                top: "0",
+                left: "0",
+                width: "100%",
+                height: "100%",
+                opacity: "0.3",
+                background: "#fff",
+                zIndex: "-1",
+              },
             }}
           >
-            <Box
-              sx={{
-                ml: 4,
-                mr: 4,
-                width: "70%",
-                height: "auto",
-              }}
-            ></Box>
-            <Box>{getStepContent(activeStep)}</Box>
+            {questions.map((question, index) => (
+              <Step
+                index={index}
+                key={index}
+                activeIndex={currentStep}
+                component={
+                  <Question
+                    details={question}
+                    answer={answers[index]}
+                    setAnswer={(answer) => saveAnswer(answer, index)}
+                  />
+                }
+              />
+            ))}
 
             <Box sx={{ display: "flex", mt: 3, mb: 2 }}>
               <Button
-                disabled={activeStep === 0}
                 variant="contained"
-                color="primary"
-                onClick={(e) => previousStep(e)}
+                disabled={isFirstStep}
+                onClick={() => setCurrentStep((previous) => previous - 1)}
               >
                 Previous
               </Button>
-              {activeStep === steps.length - 1 ? (
+              {isLastStep ? (
                 <Link to="/result" style={{ textDecoration: "none" }}>
                   <Button
-                    disabled={disable}
                     sx={{ ml: "4px" }}
                     variant="contained"
                     color="primary"
@@ -237,17 +148,17 @@ export default function FormComponent(props) {
                 </Link>
               ) : (
                 <Button
-                  disabled={disable}
                   sx={{ ml: "4px" }}
                   variant="contained"
+                  disabled={isDisableToNext}
                   color="primary"
-                  onClick={(e) => nextStep(e)}
+                  onClick={() => setCurrentStep((previous) => previous + 1)}
                 >
                   Next
                 </Button>
               )}
             </Box>
-          </Box>
+          </Card>
         </Box>
       </Box>
     </Box>
