@@ -16,7 +16,8 @@ The UI is designed using Material UI.
 
 ![image](https://user-images.githubusercontent.com/36767215/163984014-a5484eb5-7f8a-4a49-8c9e-8cd848af8380.png)
 
-![image](https://user-images.githubusercontent.com/36767215/163984169-e34a6540-420a-47bc-869d-53dd92aa8771.png)
+![image](https://user-images.githubusercontent.com/100084352/189040876-428fc914-633a-4578-9735-f22799808968.png)
+
 
 # Getting Started with Create React App
 
