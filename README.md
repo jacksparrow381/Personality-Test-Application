@@ -1,3 +1,7 @@
+# Deployement Link:
+
+- https://personality-test-application.vercel.app/
+
 # personality-test
 
 A simple human personality test that guesses the user's personality based on survey questions. End result displays user's nature whether as Introvert or Extrovert.
